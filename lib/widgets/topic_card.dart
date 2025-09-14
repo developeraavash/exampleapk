@@ -1,4 +1,5 @@
-import 'package:exampleapk/faculty.dart';
+import 'package:exampleapk/core/colors.dart';
+import 'package:exampleapk/faculty_selection_screen.dart';
 import 'package:flutter/material.dart';
 
 class TopicCard extends StatelessWidget {
@@ -22,7 +23,10 @@ class TopicCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: CColors.containerBackgroundColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: facultyColor.withValues(alpha:  0.1), width: 1),
+        border: Border.all(
+          color: facultyColor.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
