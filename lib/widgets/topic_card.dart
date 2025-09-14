@@ -2,43 +2,35 @@ import 'package:exampleapk/core/colors.dart';
 import 'package:exampleapk/faculty_selection_screen.dart';
 import 'package:flutter/material.dart';
 
+// --------- TopicCard widget (your style) ---------
 class TopicCard extends StatelessWidget {
   final String title;
   final String questionCount;
   final Color facultyColor;
-  final VoidCallback? onTap;
+  final IconData icon;
 
   const TopicCard({
-    super.key,
+    Key? key,
     required this.title,
     required this.questionCount,
     required this.facultyColor,
-    this.onTap,
-  });
+    required this.icon,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Widget content = Container(
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: CColors.containerBackgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: facultyColor.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: facultyColor.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          Container(
-            width: 4,
-            height: 40,
-            decoration: BoxDecoration(
-              color: facultyColor,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: 16),
+          Icon(icon, size: 30, color: facultyColor),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,31 +38,24 @@ class TopicCard extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: CColors.textColor,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Text(
                   questionCount,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: CColors.greyColor,
                   ),
                 ),
               ],
             ),
           ),
-          Icon(Icons.play_circle_outline, color: facultyColor, size: 24),
         ],
       ),
     );
-
-    if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: content);
-    }
-
-    return content;
   }
 }

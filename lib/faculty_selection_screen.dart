@@ -135,8 +135,8 @@ class FacultySelectionScreen extends StatelessWidget {
           FacultyDetailsScreen(
             facultyName: title,
             facultyColor: color,
-            facultyIcon: icon,
-            questionCount: subtitle,
+            facultyIcon: Icons.e_mobiledata,
+            questionCount: '',
           ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
