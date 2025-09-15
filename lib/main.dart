@@ -1,4 +1,4 @@
-import 'package:exampleapk/faculty_selection_screen.dart';
+import 'package:exampleapk/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const FacultySelectionScreen(),
+      home: HomePage(),
     );
   }
 }
