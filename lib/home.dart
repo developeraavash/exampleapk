@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'widgets/syllabus_card.dart';
+import 'widgets/questions_card.dart';
+import 'widgets/important_questions_card.dart';
 
 class CColors {
   static const Color primaryColor = Color(0xFF4361EE);
@@ -85,6 +88,21 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildSyllabusCard() {
+    return SyllabusCard(fadeAnimation: _fadeAnimation);
+  }
+
+  Widget _buildQuestionsCard() {
+    return QuestionsCard(
+      fadeAnimation: _fadeAnimation,
+      totalQuestions: 45, // You can adjust this number as needed
+    );
+  }
+
+  Widget _buildImportantQuestionsCard() {
+    return ImportantQuestionsCard(fadeAnimation: _fadeAnimation);
+  }
+
+  Widget _buildStudyMaterialsCard() {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(
@@ -100,7 +118,7 @@ class _HomePageState extends State<HomePage>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [CColors.primaryLight, CColors.primaryColor],
+                colors: const [CColors.white, CColors.backgroundColor],
               ),
             ),
             child: Padding(
@@ -112,349 +130,53 @@ class _HomePageState extends State<HomePage>
                     children: [
                       Container(
                         padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.menu_book, color: Colors.white),
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Icon(Icons.library_books, color: CColors.purple),
                       ),
                       SizedBox(width: 12),
                       Text(
-                        "Syllabus",
+                        "Study Materials",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: CColors.darkGrey,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 16),
                   Text(
-                    "Complete course syllabus for this semester",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 14,
-                    ),
+                    "Access all your study resources in one place",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14),
                   ),
                   SizedBox(height: 20),
-                  LinearProgressIndicator(
-                    value: 0.65,
-                    backgroundColor: Colors.white.withOpacity(0.3),
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    minHeight: 8,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
-                        "65% completed",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white.withOpacity(0.8),
-                        ),
+                      _buildStudyMaterialItem(
+                        Icons.picture_as_pdf,
+                        "PDF Notes",
+                        CColors.primaryColor,
                       ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                        ),
-                        child: Text(
-                          "VIEW DETAILS",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: CColors.primaryColor,
-                            fontSize: 12,
-                          ),
-                        ),
+                      _buildStudyMaterialItem(
+                        Icons.video_library,
+                        "Videos",
+                        CColors.green,
+                      ),
+                      _buildStudyMaterialItem(
+                        Icons.audiotrack,
+                        "Audio",
+                        CColors.accentColor,
+                      ),
+                      _buildStudyMaterialItem(
+                        Icons.article,
+                        "Articles",
+                        CColors.red,
                       ),
                     ],
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuestionsCard() {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: CColors.accentColor.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.quiz, color: CColors.accentColor),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      "Practice Questions",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: CColors.darkGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Test your knowledge with these practice questions",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-                SizedBox(height: 20),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: [
-                    _buildChapterChip("Chapter 1: 12 questions", CColors.green),
-                    _buildChapterChip(
-                      "Chapter 2: 8 questions",
-                      CColors.primaryColor,
-                    ),
-                    _buildChapterChip(
-                      "Chapter 3: 15 questions",
-                      CColors.purple,
-                    ),
-                    _buildChapterChip("Chapter 4: 10 questions", CColors.teal),
-                  ],
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CColors.accentColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shadowColor: CColors.accentColor.withOpacity(0.4),
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      'Start Practice',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChapterChip(String text, Color color) {
-    return Chip(
-      backgroundColor: color.withOpacity(0.1),
-      label: Text(
-        text,
-        style: TextStyle(color: color, fontWeight: FontWeight.w500),
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      side: BorderSide(color: color.withOpacity(0.2)),
-    );
-  }
-
-  Widget _buildImportantQuestionsCard() {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [CColors.red, CColors.accentColor],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.star, color: Colors.white),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      "Most Important Questions",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: CColors.darkGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Focus on these high-priority questions for exams",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-                SizedBox(height: 20),
-                _buildImportantQuestionItem(
-                  "Chapter 1: Key Concepts",
-                  Icons.looks_one,
-                ),
-                Divider(height: 20, color: Colors.grey[200]),
-                _buildImportantQuestionItem(
-                  "Chapter 2: Problem Solving",
-                  Icons.looks_two,
-                ),
-                Divider(height: 20, color: Colors.grey[200]),
-                _buildImportantQuestionItem(
-                  "Chapter 3: Advanced Topics",
-                  Icons.looks_3,
-                ),
-                SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "View All Important Questions",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: CColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImportantQuestionItem(String title, IconData icon) {
-    return ListTile(
-      leading: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: CColors.primaryColor.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: CColors.primaryColor),
-      ),
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {},
-    );
-  }
-
-  Widget _buildStudyMaterialsCard() {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: CColors.purple.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.library_books, color: CColors.purple),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      "Study Materials",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: CColors.darkGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Access all your study resources in one place",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStudyMaterialItem(
-                      Icons.picture_as_pdf,
-                      "PDF Notes",
-                      CColors.primaryColor,
-                    ),
-                    _buildStudyMaterialItem(
-                      Icons.video_library,
-                      "Videos",
-                      CColors.green,
-                    ),
-                    _buildStudyMaterialItem(
-                      Icons.audiotrack,
-                      "Audio",
-                      CColors.accentColor,
-                    ),
-                    _buildStudyMaterialItem(
-                      Icons.article,
-                      "Articles",
-                      CColors.red,
-                    ),
-                  ],
-                ),
-              ],
             ),
           ),
         ),
@@ -492,8 +214,6 @@ class _HomePageState extends State<HomePage>
           _buildQuestionsCard(),
           _buildImportantQuestionsCard(),
           _buildStudyMaterialsCard(),
-          _buildSyllabusCard(),
-          _buildQuestionsCard(),
         ],
       ),
       bottomNavigationBar: _isNavBarVisible
@@ -536,7 +256,7 @@ class _HomePageState extends State<HomePage>
                   shadows: [
                     Shadow(
                       blurRadius: 4.0,
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.white.withOpacity(0.2),
                       offset: Offset(1.0, 1.0),
                     ),
                   ],
@@ -556,7 +276,7 @@ class _HomePageState extends State<HomePage>
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [CColors.primaryColor, CColors.primaryLight],
+            colors: [CColors.primaryLight, CColors.backgroundColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
