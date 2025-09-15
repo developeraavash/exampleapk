@@ -4,21 +4,21 @@ import 'widgets/questions_card.dart';
 import 'widgets/important_questions_card.dart';
 
 class CColors {
-  static const Color primaryColor = Color(0xFF4361EE);
-  static const Color primaryLight = Color(0xFF4895EF);
-  static const Color secondaryColor = Color(0xFF3A0CA3);
-  static const Color accentColor = Color(0xFFF72585);
-  static const Color teal = Color(0xFF4CC9F0);
+  static const Color primaryColor = Color(0xFF667EEA);
+  static const Color primaryLight = Color(0xFF764BA2);
+  static const Color secondaryColor = Color(0xFF5A67D8);
+  static const Color accentColor = Color(0xFFF093FB);
+  static const Color teal = Color(0xFF4FACFE);
   static const Color white = Colors.white;
   static const Color greyColor = Colors.grey;
   static const Color lightGrey = Color(0xFFF5F5F5);
   static const Color darkGrey = Color(0xFF424242);
-  static const Color backgroundColor = Color(0xFFFAFAFA);
+  static const Color backgroundColor = Color(0xFFF8F9FA);
   static const Color shadowColor = Color(0x1A000000);
-  static const Color green = Color(0xFF4CAF50);
-  static const Color red = Color(0xFFF44336);
-  static const Color purple = Color(0xFF9C27B0);
-  static const Color yellow = Color(0xFFFFC107);
+  static const Color green = Color(0xFF56CCF2);
+  static const Color red = Color(0xFFFF6B6B);
+  static const Color purple = Color(0xFF9C88FF);
+  static const Color yellow = Color(0xFFFFC048);
 }
 
 class HomePage extends StatefulWidget {
@@ -28,21 +28,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int _selectedIndex = 0;
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarVisible = true;
   bool _isNavBarVisible = true;
   double _lastScrollOffset = 0;
+  
   late AnimationController _animationController;
+  late AnimationController _appBarController;
+  late AnimationController _navBarController;
+  
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<Offset> _appBarSlideAnimation;
+  late Animation<Offset> _navBarSlideAnimation;
 
   @override
   void initState() {
     super.initState();
 
     _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
+
+    _appBarController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+
+    _navBarController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
     );
@@ -55,24 +71,51 @@ class _HomePageState extends State<HomePage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
 
+    _appBarSlideAnimation = Tween<Offset>(
+      begin: Offset(0, -1),
+      end: Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _appBarController,
+      curve: Curves.easeInOut,
+    ));
+
+    _navBarSlideAnimation = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _navBarController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Start with bars visible
+    _appBarController.forward();
+    _navBarController.forward();
     _animationController.forward();
 
     _scrollController.addListener(() {
       double offset = _scrollController.offset;
+      double delta = offset - _lastScrollOffset;
 
-      if (offset > _lastScrollOffset && offset > 100) {
+      // Hide when scrolling down (more sensitive threshold)
+      if (delta > 3 && offset > 80) {
         if (_isAppBarVisible || _isNavBarVisible) {
           setState(() {
             _isAppBarVisible = false;
             _isNavBarVisible = false;
           });
+          _appBarController.reverse();
+          _navBarController.reverse();
         }
-      } else if (offset < _lastScrollOffset || offset < 50) {
+      }
+      // Show when scrolling up (more sensitive threshold)
+      else if (delta < -3 || offset <= 30) {
         if (!_isAppBarVisible || !_isNavBarVisible) {
           setState(() {
             _isAppBarVisible = true;
             _isNavBarVisible = true;
           });
+          _appBarController.forward();
+          _navBarController.forward();
         }
       }
 
@@ -84,6 +127,8 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     _scrollController.dispose();
     _animationController.dispose();
+    _appBarController.dispose();
+    _navBarController.dispose();
     super.dispose();
   }
 
@@ -128,11 +173,8 @@ class _HomePageState extends State<HomePage>
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(shape: BoxShape.circle),
-                        child: Icon(Icons.library_books, color: CColors.purple),
-                      ),
+                      Icon(Icons.library_books, 
+                          color: CColors.primaryColor, size: 28),
                       SizedBox(width: 12),
                       Text(
                         "Study Materials",
@@ -153,26 +195,10 @@ class _HomePageState extends State<HomePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStudyMaterialItem(
-                        Icons.picture_as_pdf,
-                        "PDF Notes",
-                        CColors.primaryColor,
-                      ),
-                      _buildStudyMaterialItem(
-                        Icons.video_library,
-                        "Videos",
-                        CColors.green,
-                      ),
-                      _buildStudyMaterialItem(
-                        Icons.audiotrack,
-                        "Audio",
-                        CColors.accentColor,
-                      ),
-                      _buildStudyMaterialItem(
-                        Icons.article,
-                        "Articles",
-                        CColors.red,
-                      ),
+                      _buildStudyMaterialItem(Icons.picture_as_pdf, 'PDFs', CColors.red),
+                      _buildStudyMaterialItem(Icons.video_library, 'Videos', CColors.purple),
+                      _buildStudyMaterialItem(Icons.quiz, 'Quizzes', CColors.green),
+                      _buildStudyMaterialItem(Icons.notes, 'Notes', CColors.yellow),
                     ],
                   ),
                 ],
@@ -203,84 +229,108 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _isAppBarVisible ? _buildAnimatedAppBar() : null,
-      backgroundColor: Colors.grey[100],
-      body: ListView(
-        controller: _scrollController,
-        children: [
-          SizedBox(height: 8),
-          _buildSyllabusCard(),
-          _buildQuestionsCard(),
-          _buildImportantQuestionsCard(),
-          _buildStudyMaterialsCard(),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: CColors.backgroundColor,
+        body: Stack(
+          children: [
+            // Main content that can extend behind app bar and nav bar
+            Positioned.fill(
+              child: ListView(
+                controller: _scrollController,
+                padding: EdgeInsets.only(
+                  top: kToolbarHeight + MediaQuery.of(context).padding.top + 8,
+                  bottom: 88, // Bottom padding for nav bar
+                ),
+                children: [
+                  _buildSyllabusCard(),
+                  _buildQuestionsCard(),
+                  _buildImportantQuestionsCard(),
+                  _buildStudyMaterialsCard(),
+                  SizedBox(height: 20), // Extra space at bottom
+                ],
+              ),
+            ),
+            
+            // Floating App Bar
+            Positioned(
+              top: -30,
+              left: 0,
+              right: 0,
+              child: SlideTransition(
+                position: _appBarSlideAnimation,
+                child: Container(
+                  padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                  child: _buildAnimatedAppBar(),
+                ),
+              ),
+            ),
+            
+            // Floating Navigation Bar
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SlideTransition(
+                position: _navBarSlideAnimation,
+                child: _buildAnimatedNavBar(context),
+              ),
+            ),
+          ],
+        ),
       ),
-      bottomNavigationBar: _isNavBarVisible
-          ? _buildAnimatedNavBar(context)
-          : null,
     );
   }
 
-  PreferredSizeWidget _buildAnimatedAppBar() {
-    return AppBar(
-      backgroundColor: CColors.primaryColor,
-      elevation: 4,
-      shape: RoundedRectangleBorder(
+  Widget _buildAnimatedAppBar() {
+    return Container(
+      height: kToolbarHeight,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [CColors.primaryColor, CColors.primaryLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      title: AnimatedSwitcher(
-        duration: Duration(milliseconds: 300),
-        child: _selectedIndex == 0
-            ? Text(
-                'Study & Learning App',
-                key: ValueKey('home-title'),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: Colors.black.withOpacity(0.2),
-                      offset: Offset(1.0, 1.0),
-                    ),
-                  ],
-                ),
-              )
-            : Text(
-                _getAppBarTitle(),
-                key: ValueKey('other-title'),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: Colors.white.withOpacity(0.2),
-                      offset: Offset(1.0, 1.0),
-                    ),
-                  ],
+      child: SafeArea(
+        child: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.menu_rounded, color: CColors.white),
+              onPressed: () {},
+            ),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                child: Text(
+                  _getAppBarTitle(),
+                  key: ValueKey(_selectedIndex),
+                  style: TextStyle(
+                    color: CColors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-      ),
-      centerTitle: true,
-      leading: IconButton(icon: Icon(Icons.menu_rounded), onPressed: () {}),
-      actions: [
-        IconButton(icon: Icon(Icons.search_rounded), onPressed: () {}),
-        IconButton(
-          icon: Icon(Icons.notifications_none_rounded),
-          onPressed: () {},
-        ),
-        SizedBox(width: 8),
-      ],
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [CColors.primaryLight, CColors.backgroundColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            IconButton(
+              icon: Icon(Icons.search_rounded, color: CColors.white),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.notifications_none_rounded, color: CColors.white),
+              onPressed: () {},
+            ),
+          ],
         ),
       ),
     );
@@ -329,13 +379,13 @@ class _HomePageState extends State<HomePage>
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [CColors.secondaryColor, CColors.primaryColor],
+                  colors: [CColors.primaryColor, CColors.primaryLight],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: CColors.shadowColor,
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: Offset(0, -2),
                   ),
@@ -353,29 +403,27 @@ class _HomePageState extends State<HomePage>
               child: GestureDetector(
                 onTap: () => setState(() => _selectedIndex = 2),
                 child: Container(
-                  width: 1.8 * notchRadius,
-                  height: 1.8 * notchRadius,
+                  width: (notchRadius - 4) * 2,
+                  height: (notchRadius - 4) * 2,
                   decoration: BoxDecoration(
+                    shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [CColors.accentColor, CColors.purple],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: CColors.accentColor.withOpacity(0.5),
-                        blurRadius: 10,
+                        color: CColors.accentColor.withOpacity(0.3),
+                        blurRadius: 12,
                         offset: Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: Icon(
-                      Icons.chat_bubble_outline_rounded,
-                      color: CColors.white,
-                      size: 28,
-                    ),
+                  child: Icon(
+                    Icons.smart_toy_rounded,
+                    color: CColors.white,
+                    size: 28,
                   ),
                 ),
               ),
