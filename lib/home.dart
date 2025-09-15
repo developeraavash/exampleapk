@@ -229,55 +229,53 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: CColors.backgroundColor,
-        body: Stack(
-          children: [
-            // Main content that can extend behind app bar and nav bar
-            Positioned.fill(
-              child: ListView(
-                controller: _scrollController,
-                padding: EdgeInsets.only(
-                  top: kToolbarHeight + MediaQuery.of(context).padding.top + 8,
-                  bottom: 88, // Bottom padding for nav bar
-                ),
-                children: [
-                  _buildSyllabusCard(),
-                  _buildQuestionsCard(),
-                  _buildImportantQuestionsCard(),
-                  _buildStudyMaterialsCard(),
-                  SizedBox(height: 20), // Extra space at bottom
-                ],
+    return Scaffold(
+      backgroundColor: CColors.backgroundColor,
+      body: Stack(
+        children: [
+          // Main content that can extend behind app bar and nav bar
+          Positioned.fill(
+            child: ListView(
+              controller: _scrollController,
+              padding: EdgeInsets.only(
+                top: kToolbarHeight + MediaQuery.of(context).padding.top + 8,
+                bottom: 88, // Bottom padding for nav bar
+              ),
+              children: [
+                _buildSyllabusCard(),
+                _buildQuestionsCard(),
+                _buildImportantQuestionsCard(),
+                _buildStudyMaterialsCard(),
+                SizedBox(height: 20), // Extra space at bottom
+              ],
+            ),
+          ),
+          
+          // Floating App Bar
+          Positioned(
+            top: -30,
+            left: 0,
+            right: 0,
+            child: SlideTransition(
+              position: _appBarSlideAnimation,
+              child: Container(
+                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                child: _buildAnimatedAppBar(),
               ),
             ),
-            
-            // Floating App Bar
-            Positioned(
-              top: -30,
-              left: 0,
-              right: 0,
-              child: SlideTransition(
-                position: _appBarSlideAnimation,
-                child: Container(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  child: _buildAnimatedAppBar(),
-                ),
-              ),
+          ),
+          
+          // Floating Navigation Bar
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: SlideTransition(
+              position: _navBarSlideAnimation,
+              child: _buildAnimatedNavBar(context),
             ),
-            
-            // Floating Navigation Bar
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: SlideTransition(
-                position: _navBarSlideAnimation,
-                child: _buildAnimatedNavBar(context),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -6,10 +6,10 @@ class QuestionsCard extends StatelessWidget {
   final int totalQuestions;
 
   const QuestionsCard({
-    Key? key,
+    super.key,
     required this.fadeAnimation,
     required this.totalQuestions,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class QuestionsCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withAlpha(20),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -64,7 +64,7 @@ class QuestionsCard extends StatelessWidget {
                   Text(
                     "$totalQuestions questions to solve",
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withAlpha(90),
                       fontSize: 14,
                     ),
                   ),
@@ -75,7 +75,7 @@ class QuestionsCard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withAlpha(20),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -90,7 +90,7 @@ class QuestionsCard extends StatelessWidget {
                         Text(
                           "30 mins left",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withAlpha(90),
                             fontSize: 12,
                           ),
                         ),
@@ -105,7 +105,7 @@ class QuestionsCard extends StatelessWidget {
                         "25% completed",
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withAlpha(80),
                         ),
                       ),
                       ElevatedButton(

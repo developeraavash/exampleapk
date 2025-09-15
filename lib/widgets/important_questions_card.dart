@@ -24,7 +24,11 @@ class ImportantQuestionsCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: const [CColors.primaryLight, CColors.accentColor],
+                colors: const [
+                  CColors.primaryLight,
+                  Colors.pink,
+                  CColors.accentColor,
+                ],
               ),
             ),
             child: Padding(
